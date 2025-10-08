@@ -1,20 +1,20 @@
 from django.contrib import admin
 from import_export.admin import ImportExportActionModelAdmin
 
-from users.models import Subscribers, User
+from users.models import Subscriber, User
 
 from .models import Ingredient, Recipe, RecipeIngredient, RecipeTag, Tag
 
 
 class SubscribersInline(admin.TabularInline):
-    model = Subscribers
+    model = Subscriber
     min_num = 1
 
 
 class UserAdmin(admin.ModelAdmin):
     @admin.display(description='Подписчики')
     def get_subscribers(self, obj):
-        subscribers = Subscribers.objects.filter(author_id=obj.id)
+        subscribers = Subscriber.objects.filter(author_id=obj.id)
         return [i.user for i in subscribers]
 
     list_display = (

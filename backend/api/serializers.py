@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from recipes.models import (FavoriteRecipes, Ingredient, Recipe,
                             RecipeIngredient, ShoppingCart, Tag)
-from users.models import Subscribers, User
+from users.models import Subscriber, User
 
 
 class UsersSerializer(serializers.ModelSerializer):
@@ -13,8 +13,8 @@ class UsersSerializer(serializers.ModelSerializer):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-        return Subscribers.objects.filter(author=obj,
-                                          user=user).exists()
+        return Subscriber.objects.filter(author=obj,
+                                         user=user).exists()
 
     class Meta:
         model = User
@@ -45,7 +45,7 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
-        model = Subscribers
+        model = Subscriber
         fields = (
             'email',
             'id',
@@ -59,8 +59,8 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
 
     def get_subscribed(self, obj):
         user = self.context.get('request').user
-        return Subscribers.objects.filter(author=obj.author,
-                                          user=user).exists()
+        return Subscriber.objects.filter(author=obj.author,
+                                         user=user).exists()
 
     def get_recipes(self, obj):
         request = self.context.get('request')
@@ -69,6 +69,22 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
             Recipe.objects.filter(author=obj.author)[:int(limit)],
             many=True
         ).data
+
+
+class SubscribeSerializer(serializers.ModelSerializer):
+    def validate(self, data):
+        if data['author'] == data['user']:
+            raise serializers.ValidationError(
+                'Нельзя подписаться на самого себя!')
+        if Subscriber.objects.filter(author=data['author'],
+                                     user=data['user']).exists():
+            raise serializers.ValidationError(
+                'Вы уже подписаны на этого автора!')
+        return data
+
+    class Meta:
+        model = Subscriber
+        fields = '__all__'
 
 
 class TagSerializer(serializers.ModelSerializer):

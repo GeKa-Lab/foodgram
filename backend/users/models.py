@@ -4,7 +4,6 @@ from django.core.validators import RegexValidator
 
 
 UNIQUE_USERNAME = RegexValidator(r'^[\w.@+-]+\Z', 'Поддерживаемые знаки.')
-REGEX_COLOR = RegexValidator(r'^#[0-9A-F]{6}$', 'Поддерживаемые знаки.')
 REGEX_SLUG = RegexValidator(r'^[-a-zA-Z0-9_]+$', 'Поддерживаемые знаки.')
 REGEX_AMOUNT = RegexValidator(r'^[1-9][0-9]*$', 'Поддерживаемые значения.')
 
@@ -12,6 +11,11 @@ REGEX_AMOUNT = RegexValidator(r'^[1-9][0-9]*$', 'Поддерживаемые з
 # Create your models here.
 class User(AbstractUser):
     USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = [
+        'username',
+        'first_name',
+        'last_name',
+    ]
 
     email = models.EmailField(
         unique=True,
