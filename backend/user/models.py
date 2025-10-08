@@ -44,3 +44,22 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class Subscriber(models.Model):
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='authors',
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subscribers',
+    )
+
+    class Meta:
+        ordering = ('author',)
+
+    def __str__(self):
+        return f"{self.author} - {self.user}"
