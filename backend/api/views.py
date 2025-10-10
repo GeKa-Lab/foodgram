@@ -13,7 +13,7 @@ from users.models import Subscriber, User
 from .filters import IngredientFilter, RecipesFilter
 from .serializers import (AddRecipeSerializer, FavoriteRecipesSerializer,
                           GetRecipeSerializer, IngredientSerializer,
-                          ShoppingCartSerializer,
+                          ShoppingCartSerializer, SubscribeSerializer,
                           SubscriptionsSerializer, TagSerializer)
 from rest_framework import permissions
 

@@ -224,7 +224,7 @@ class AddRecipeSerializer(serializers.ModelSerializer):
             'username': author.username,
             'first_name': author.first_name,
             'last_name': author.last_name,
-            'is_subscribed': Subscribers.objects.filter(
+            'is_subscribed': Subscriber.objects.filter(
                 author=author,
                 user=user).exists()
         }
@@ -276,6 +276,3 @@ class FavoriteRecipesSerializer(serializers.ModelSerializer):
     class Meta:
         model = FavoriteRecipes
         fields = ('id', 'name', 'image', 'coocking_time')
-
-
-

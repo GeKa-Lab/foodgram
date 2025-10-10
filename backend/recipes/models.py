@@ -12,7 +12,7 @@ class Tag(models.Model):
     slug = models.SlugField(
         null=True,
         unique=True,
-        verbose_name='Аббревиатура тега',
+        verbose_name='Slug тега',
     )
 
     def __str__(self):
@@ -79,11 +79,6 @@ class Recipe(models.Model):
         verbose_name='Время приготовления',
         help_text='Укажите время приготовления, от 1 мин'
     )
-
-    class Meta:
-        ordering = ('name',)
-        verbose_name = 'Рецепт'
-        verbose_name_plural = 'Рецепты'
 
     def __str__(self):
         return self.name
