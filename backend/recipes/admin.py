@@ -1,20 +1,19 @@
 from django.contrib import admin
 from import_export.admin import ImportExportActionModelAdmin
-
-from users.models import Subscriber, User
+from users.models import Subscribers, User
 
 from .models import Ingredient, Recipe, RecipeIngredient, RecipeTag, Tag
 
 
 class SubscribersInline(admin.TabularInline):
-    model = Subscriber
+    model = Subscribers
     min_num = 1
 
 
 class UserAdmin(admin.ModelAdmin):
     @admin.display(description='Подписчики')
     def get_subscribers(self, obj):
-        subscribers = Subscriber.objects.filter(author_id=obj.id)
+        subscribers = Subscribers.objects.filter(author_id=obj.id)
         return [i.user for i in subscribers]
 
     list_display = (
@@ -54,6 +53,8 @@ class RecipeIngredientInline(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     @admin.display(description='Теги')
     def get_tags(self, obj):
+        """Функция для корректного отображения тегов в list_display
+           Админке-Рецептов."""
         return (
             ', '.join([tag.name for tag in obj.tags.all()])
         )

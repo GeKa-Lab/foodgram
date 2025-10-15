@@ -1,19 +1,28 @@
 from django.db import models
-
+from foodgram.settings import (REGEX_AMOUNT, REGEX_SLUG, TEXT_MAX_LENGTH)
 from users.models import User
 
 
 class Tag(models.Model):
     name = models.CharField(
         unique=True,
-        max_length=200,
+        max_length=TEXT_MAX_LENGTH,
         verbose_name='Название тега',
+        help_text='Укажите название тега'
     )
+
     slug = models.SlugField(
         null=True,
         unique=True,
-        verbose_name='Slug тега',
+        validators=[REGEX_SLUG],
+        verbose_name='Аббревиатура тега',
+        help_text='Укажите аббревиатуру тега'
     )
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
 
     def __str__(self):
         return self.name
@@ -22,13 +31,20 @@ class Tag(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(
         unique=True,
-        max_length=200,
+        max_length=TEXT_MAX_LENGTH,
         verbose_name='Название ингредиента',
+        help_text='Укажите название ингредиента'
     )
     measurement_unit = models.CharField(
-        max_length=200,
+        max_length=TEXT_MAX_LENGTH,
         verbose_name='Единицы измерения',
+        help_text='Укажите единицы измерения'
     )
+
+    class Meta:
+        ordering = ('id', 'name')
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
         return self.name
@@ -40,6 +56,7 @@ class Recipe(models.Model):
         on_delete=models.CASCADE,
         related_name='recipes',
         verbose_name='Автор рецепта',
+        help_text='Укажите автора рецепта'
     )
     tags = models.ManyToManyField(
         Tag,
@@ -56,10 +73,12 @@ class Recipe(models.Model):
     is_favorited = models.BooleanField(
         default=True,
         verbose_name='Находится в избранном',
+        help_text='Отметьте рецепт в избранное'
     )
     is_in_shopping_cart = models.BooleanField(
         default=True,
         verbose_name='Находится в корзине',
+        help_text='Отложите рецепт в корзину'
     )
     image = models.ImageField(
         verbose_name='Изображение рецепта',
@@ -67,7 +86,7 @@ class Recipe(models.Model):
         upload_to='recipes_images'
     )
     name = models.CharField(
-        max_length=200,
+        max_length=TEXT_MAX_LENGTH,
         verbose_name='Название рецепта',
         help_text='Укажите название рецепта'
     )
@@ -76,9 +95,15 @@ class Recipe(models.Model):
         help_text='Укажите описание рецепта'
     )
     cooking_time = models.PositiveIntegerField(
+        validators=[REGEX_AMOUNT],
         verbose_name='Время приготовления',
         help_text='Укажите время приготовления, от 1 мин'
     )
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
 
     def __str__(self):
         return self.name
@@ -129,6 +154,7 @@ class RecipeIngredient(models.Model):
         help_text='Укажите ингредиент рецепта'
     )
     amount = models.PositiveIntegerField(
+        validators=[REGEX_AMOUNT],
         verbose_name='Кол-во ингредиента',
         help_text='Укажите кол-во ингредиента, от 1 и более'
     )
